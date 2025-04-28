@@ -8,6 +8,7 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -17,7 +18,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -72,19 +72,18 @@ fun shimmerBrush(): Brush {
 
 
 @Composable
-fun ShimmerCard() {
+fun ShimmerCard(modifier: Modifier) {
     Box(
-        modifier = Modifier
-            .size(width = 200.dp, height = 300.dp)
+        modifier = modifier
             .background(shimmerBrush(), shape = RoundedCornerShape(12.dp))
     )
 }
 
 @Composable
 fun SearchListHorizontal(
-    items: List<SearchList>,   // List of items
-    isLoading: Boolean,        // Loading state flag
-    navController: NavController // Navigation controller
+    items: List<SearchList>,
+    isLoading: Boolean,
+    navController: NavController
 ) {
 
     LazyRow(
@@ -92,9 +91,10 @@ fun SearchListHorizontal(
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         if (isLoading) {
-            items(8) { item -> ShimmerCard() }
+            items(8) { item -> ShimmerCard(Modifier
+                .width(200.dp)
+                .height(300.dp)) }
         } else {
-            // Use items() to display each item, making sure it's inside a composable context
             items.forEach { item ->
                 item {
                     SearchItemCard(
@@ -129,8 +129,12 @@ fun SearchListVertical(
                 Row(
                     Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    ShimmerCard()
-                    ShimmerCard()
+                    ShimmerCard(Modifier
+                        .weight(1f)
+                        .height(200.dp))
+                    ShimmerCard(Modifier
+                        .weight(1f)
+                        .height(200.dp))
                 }
             }
         } else {
@@ -141,8 +145,9 @@ fun SearchListVertical(
                     Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     rowItems.forEach { item ->
+
                         SearchItemCard(
-                            item, modifier = Modifier
+                            item, Modifier
                                 .weight(1f)      // equal share of width
                                 .height(200.dp)
                         ) {
@@ -171,6 +176,7 @@ fun SearchItemCard(item: SearchList, modifier: Modifier, onClick: () -> Unit) {
         shape = RoundedCornerShape(12.dp),
         elevation = CardDefaults.cardElevation(8.dp),
         modifier = modifier
+            .clickable(onClick = onClick)
     ) {
         Box {
             AsyncImage(
